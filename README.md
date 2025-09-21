@@ -12,16 +12,24 @@ O objetivo foi implementar duas APIs distintas:
 
 
 
+## 📂 Estrutura do Projeto
+
+```bash
 dev-backend/
-├─ src/main/java/com/alfa/devbackend
-│ ├─ tickets/ # Problema 01 — Tickets e Dashboard
-│ └─ receitas/ # Problema 02 — Integração com Forkify
-├─ src/main/resources/
-│ ├─ application.yml # Configurações do Spring Boot
-│ ├─ schema.sql # Estrutura inicial do banco H2
-│ └─ data.sql # Dados iniciais (clientes, módulos, tickets)
-├─ pom.xml # Dependências Maven
-└─ README.md # Documentação
+├─ src/
+│  └─ main/
+│     ├─ java/com/alfa/devbackend/
+│     │  ├─ tickets/      # Problema 01 — Tickets e Dashboard
+│     │  └─ receitas/     # Problema 02 — Integração com Forkify
+│     │
+│     └─ resources/
+│        ├─ application.yml   # Configurações do Spring Boot
+│        ├─ schema.sql        # Estrutura inicial do banco H2
+│        └─ data.sql          # Dados iniciais (clientes, módulos, tickets)
+│
+├─ pom.xml        # Dependências Maven
+└─ README.md      # Documentação
+
 
 
 ---
