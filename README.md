@@ -52,9 +52,6 @@ No terminal:
 ./mvnw spring-boot:run
 
 
-O servidor subirá em:
- http://localhost:8080
-
  Documentação da API
 URLS:
 Usar as URLs corretas (mais rápido)
