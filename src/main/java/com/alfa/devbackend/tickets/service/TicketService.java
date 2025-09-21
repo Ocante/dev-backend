@@ -1,0 +1,81 @@
+package com.alfa.devbackend.tickets.service;
+
+import com.alfa.devbackend.tickets.domain.Ticket;
+import com.alfa.devbackend.tickets.dto.*;
+import com.alfa.devbackend.tickets.repository.TicketRepository;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
+
+@Service
+public class TicketService {
+
+  private final TicketRepository ticketRepository;
+
+  // Construtor explícito (dispensa Lombok)
+  public TicketService(TicketRepository ticketRepository) {
+    this.ticketRepository = ticketRepository;
+  }
+
+  public DashboardDTO getDashboard(int month, int year) {
+    YearMonth ym = YearMonth.of(year, month);
+    LocalDate start = ym.atDay(1);
+    LocalDate end   = ym.atEndOfMonth();
+
+    List<Ticket> tickets = ticketRepository.findAllInMonth(start, end);
+
+    // Se ainda aparecer "invalid method reference", troque por lambda:
+    // .sorted(Comparator.comparing(t -> t.getOpeningDate()))
+    List<TicketDTO> ticketDtos = tickets.stream()
+        .sorted(Comparator.comparing(Ticket::getOpeningDate))
+        .map(t -> new TicketDTO(
+            t.getId(),
+            t.getTitle(),
+            t.getClient().getId(),
+            t.getClient().getName(),
+            t.getModule().getId(),
+            t.getModule().getName(),
+            t.getOpeningDate(),
+            t.getClosingDate()
+        ))
+        .toList();
+
+    Map<Long, Long> byClient = tickets.stream()
+        .collect(Collectors.groupingBy(t -> t.getClient().getId(), Collectors.counting()));
+
+    Map<Long, Long> byModule = tickets.stream()
+        .collect(Collectors.groupingBy(t -> t.getModule().getId(), Collectors.counting()));
+
+    List<GroupCountDTO> groupByClient = byClient.entrySet().stream()
+        .map(e -> {
+          Long id = e.getKey();
+          String name = tickets.stream()
+              .filter(t -> t.getClient().getId().equals(id))
+              .findFirst()
+              .map(t -> t.getClient().getName())
+              .orElse("Desconhecido");
+          return new GroupCountDTO(id, name, e.getValue());
+        })
+        .sorted(Comparator.comparing(GroupCountDTO::total).reversed())
+        .toList();
+
+    List<GroupCountDTO> groupByModule = byModule.entrySet().stream()
+        .map(e -> {
+          Long id = e.getKey();
+          String name = tickets.stream()
+              .filter(t -> t.getModule().getId().equals(id))
+              .findFirst()
+              .map(t -> t.getModule().getName())
+              .orElse("Desconhecido");
+          return new GroupCountDTO(id, name, e.getValue());
+        })
+        .sorted(Comparator.comparing(GroupCountDTO::total).reversed())
+        .toList();
+
+    return new DashboardDTO(new PeriodDTO(month, year), ticketDtos, groupByClient, groupByModule);
+  }
+}

@@ -1,0 +1,30 @@
+# Porta HTTP e banco H2 em memória 
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:alfa;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none   
+    show-sql: false
+    properties:
+      hibernate.format_sql: true  
+
+  sql:
+    init:
+      mode: always    
+
+  h2:
+    console:
+      enabled: true    
+      path: /h2-console
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html  
