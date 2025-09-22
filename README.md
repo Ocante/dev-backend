@@ -81,6 +81,8 @@ Banco: em memória, recriado a cada execução
 Scripts: schema.sql e data.sql carregados automaticamente
 
 Console H2: http://localhost:8080/h2-console
+ou
+http://localhost:8080/h2-console/login.jsp?jsessionid=6c1a4bc665957583a405e591cd9451e6
 
 Credenciais:
 
