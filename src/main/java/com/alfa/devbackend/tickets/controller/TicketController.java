@@ -1,30 +1,44 @@
 package com.alfa.devbackend.tickets.controller;
 
-import com.alfa.devbackend.tickets.domain.Client;
-import com.alfa.devbackend.tickets.domain.Module;
-import com.alfa.devbackend.tickets.domain.Ticket;
 import com.alfa.devbackend.tickets.dto.CreateTicketRequest;
-import com.alfa.devbackend.tickets.repository.TicketRepository;
+import com.alfa.devbackend.tickets.dto.CreateTicketResponse;
+import com.alfa.devbackend.tickets.domain.Ticket;
+import com.alfa.devbackend.tickets.service.TicketAppService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/api/v1/tickets")
-@RequiredArgsConstructor
 public class TicketController {
 
-  private final TicketRepository ticketRepository;
+  private final TicketAppService service;
 
-  @PostMapping
-  public Ticket create(@RequestBody @Valid CreateTicketRequest req) {
-    // Prepara o objeto a ser salvo (associa Client e Module pelos respectivos IDs)
-    Ticket t = new Ticket();
-    t.setTitle(req.title());
-    t.setOpeningDate(req.openingDate());
-    t.setClosingDate(req.closingDate());
-    t.setClient(new Client(req.clientId(), null));
-    t.setModule(new Module(req.moduleId(), null));
-    return ticketRepository.save(t);
+  public TicketController(TicketAppService service) {
+    this.service = service;
+  }
+
+  @PostMapping(consumes = "application/json", produces = "application/json")
+  public ResponseEntity<CreateTicketResponse> create(@RequestBody @Valid CreateTicketRequest req) {
+    Ticket saved = service.create(req);
+
+    // Mapeia para DTO sem tocar nos proxies (usa ids que já recebemos no request)
+    CreateTicketResponse dto = new CreateTicketResponse(
+        saved.getId(),
+        saved.getTitle(),
+        req.clientId(),
+        req.moduleId(),
+        saved.getOpeningDate(),
+        saved.getClosingDate()
+    );
+
+    return ResponseEntity
+        .created(URI.create("/api/v1/tickets/" + saved.getId()))
+        .body(dto);
   }
 }

@@ -13,19 +13,17 @@ DELETE FROM TICKET;
 -- ----------------------------------------------------------
 -- CLIENTES (do Enunciado)
 -- ----------------------------------------------------------
-INSERT INTO CLIENT (ID, NAME) VALUES (1,'Apple Inc.');
-INSERT INTO CLIENT (ID, NAME) VALUES (2,'Google');
-INSERT INTO CLIENT (ID, NAME) VALUES (3,'Microsoft');
-INSERT INTO CLIENT (ID, NAME) VALUES (4,'Tesla');
-INSERT INTO CLIENT (ID, NAME) VALUES (5,'SpaceX');
+-- Upsert (H2): garante que CLIENT/MODULE existam sem duplicar
+MERGE INTO CLIENT (ID, NAME) KEY(ID) VALUES (1, 'Apple Inc.');
+MERGE INTO CLIENT (ID, NAME) KEY(ID) VALUES (2, 'Google');
+MERGE INTO CLIENT (ID, NAME) KEY(ID) VALUES (3, 'Microsoft');
+MERGE INTO CLIENT (ID, NAME) KEY(ID) VALUES (4, 'Tesla');
+MERGE INTO CLIENT (ID, NAME) KEY(ID) VALUES (5, 'SpaceX');
 
--- ----------------------------------------------------------
--- MÓDULOS (do Enunciado; padronizados)
--- ----------------------------------------------------------
-INSERT INTO MODULE (ID, NAME) VALUES (1,'Financeiro');
-INSERT INTO MODULE (ID, NAME) VALUES (2,'Vendas');
-INSERT INTO MODULE (ID, NAME) VALUES (3,'Expedição');
-INSERT INTO MODULE (ID, NAME) VALUES (4,'Foguetes');
+MERGE INTO MODULE (ID, NAME) KEY(ID) VALUES (1, 'Financeiro');
+MERGE INTO MODULE (ID, NAME) KEY(ID) VALUES (2, 'Vendas');
+MERGE INTO MODULE (ID, NAME) KEY(ID) VALUES (3, 'Expedição');
+MERGE INTO MODULE (ID, NAME) KEY(ID) VALUES (4, 'Foguetes');
 
 -- ==========================================================
 -- TICKETS (do Enunciado) — Lista completa

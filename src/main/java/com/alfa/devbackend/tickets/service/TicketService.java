@@ -1,22 +1,25 @@
 package com.alfa.devbackend.tickets.service;
 
 import com.alfa.devbackend.tickets.domain.Ticket;
-import com.alfa.devbackend.tickets.dto.*;
+import com.alfa.devbackend.tickets.dto.DashboardDTO;
+import com.alfa.devbackend.tickets.dto.GroupCountDTO;
+import com.alfa.devbackend.tickets.dto.PeriodDTO;
+import com.alfa.devbackend.tickets.dto.TicketDTO;
 import com.alfa.devbackend.tickets.repository.TicketRepository;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.springframework.stereotype.Service;
 
 @Service
 public class TicketService {
 
   private final TicketRepository ticketRepository;
 
-  // Construtor explícito (dispensa Lombok)
   public TicketService(TicketRepository ticketRepository) {
     this.ticketRepository = ticketRepository;
   }
@@ -28,8 +31,6 @@ public class TicketService {
 
     List<Ticket> tickets = ticketRepository.findAllInMonth(start, end);
 
-    // Se ainda aparecer "invalid method reference", troque por lambda:
-    // .sorted(Comparator.comparing(t -> t.getOpeningDate()))
     List<TicketDTO> ticketDtos = tickets.stream()
         .sorted(Comparator.comparing(Ticket::getOpeningDate))
         .map(t -> new TicketDTO(
